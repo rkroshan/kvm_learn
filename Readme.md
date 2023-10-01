@@ -32,3 +32,28 @@ KVM start run
 KVM_EXIT_IO
 out port: 16, data: 1
 ```
+
+## To run kvm_code_bin_multi
+### kvm_code_bin_multi runs a x86 vm multithread with n vcpus executing binary code from test.bin
+- make
+- ./kvm_code_bin_multi
+- can change num of vcpus by changing the macro `NUM_VPCUS` in kvm_code_bin_multi.c
+- sample output
+```
+./kvm_code_bin_multi
+read size: 7
+KVM start run
+KVM start run
+KVM start run
+KVM_EXIT_IO
+out port: 16, data: 0 cpuid: 3
+KVM_EXIT_IO
+out port: 16, data: 0 cpuid: 0
+KVM start run
+KVM_EXIT_IO
+out port: 16, data: 0 cpuid: 1
+KVM_EXIT_IO
+out port: 16, data: 0 cpuid: 2
+KVM start run
+KVM start run
+```
