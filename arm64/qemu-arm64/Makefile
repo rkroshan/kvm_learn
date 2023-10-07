@@ -1,10 +1,12 @@
 CC=aarch64-none-elf-gcc
 LD=aarch64-none-elf-ld
+OBJCOPY=aarch64-none-elf-objcopy
 
 all: clean build
 
 build: boot.o qemu_arm64.o
 	$(LD) -T linker.ld boot.o qemu_arm64.o -o qemu_arm64_test.elf
+	$(OBJCOPY) -O binary qemu_arm64_test.elf qemu_arm64_test.bin
 
 boot.o: boot.s
 	$(CC) -c $^ -o $@

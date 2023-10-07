@@ -1,2 +1,2 @@
-qemu_arm64_test.elf
+qemu_arm64_test.*
 *.o
