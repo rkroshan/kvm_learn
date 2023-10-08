@@ -1,10 +1,17 @@
 CC=aarch64-none-elf-gcc
 LD=aarch64-none-elf-ld
 OBJCOPY=aarch64-none-elf-objcopy
+KVMCC=aarch64-rpi4-linux-gnu-gcc
+CPPFLAGS=-g -Wall -Wextra -Werror
 
-all: clean build
+all: clean build_os build_kvm
 
-build: boot.o qemu_arm64.o
+build_kvm: kvm_code_bin
+	
+kvm_code_bin:kvm_code_bin.c
+	$(KVMCC) $(CPPFLAGS) -o $@ $^ -lpthread
+
+build_os: boot.o qemu_arm64.o
 	$(LD) -T linker.ld boot.o qemu_arm64.o -o qemu_arm64_test.elf
 	$(OBJCOPY) -O binary qemu_arm64_test.elf qemu_arm64_test.bin
 
@@ -18,10 +25,7 @@ clean:
 	rm -rf boot.o
 	rm -rf qemu_arm64.o
 	rm -rf qemu_arm64_test.*
+	rm -rf kvm_code_bin
 
 run:
-#on Aarch64 device
-	qemu-system-aarch64 -M virt -cpu host -enable-kvm -nographic -kernel qemu_arm64_test.elf
-#other platform we need to emulation
-	qemu-system-aarch64 -M virt -cpu cortex-a72 -nographic -kernel qemu_arm64_test.elf
-	
+	./kvm_code_bin

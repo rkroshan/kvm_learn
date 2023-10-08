@@ -1,0 +1,31 @@
+CC=gcc
+LD=ld
+OBJCOPY=objcopy
+KVMCC=gcc
+CPPFLAGS=-g -Wall -Wextra -Werror
+
+all: clean build_os build_kvm
+
+build_kvm: kvm_code_bin
+	
+kvm_code_bin:kvm_code_bin.c
+	$(KVMCC) $(CPPFLAGS) -o $@ $^ -lpthread
+
+build_os: boot.o qemu_arm64.o
+	$(LD) -T linker.ld boot.o qemu_arm64.o -o qemu_arm64_test.elf
+	$(OBJCOPY) -O binary qemu_arm64_test.elf qemu_arm64_test.bin
+
+boot.o: boot.s
+	$(CC) -c $^ -o $@
+
+qemu_arm64.o: qemu_arm64.c
+	$(CC) -c $^ -o $@
+
+clean:
+	rm -rf boot.o
+	rm -rf qemu_arm64.o
+	rm -rf qemu_arm64_test.*
+	rm -rf kvm_code_bin
+
+run:
+	./kvm_code_bin
